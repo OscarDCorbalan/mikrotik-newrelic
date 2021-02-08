@@ -1,4 +1,5 @@
 :local NrApiKey "ABC"
+:local NrMetricsUrl "https://metric-api.eu.newrelic.com/metric/v1"
 
 :local EpochTime do={
    :local ds [/system clock get date];
@@ -39,4 +40,4 @@
 {\"name\":\"mikrotic.ip.dns.cache.size\",\"value\":$DnsCacheSize,\"type\":\"gauge\",\"timestamp\":$Timestamp},
 {\"name\":\"mikrotic.ip.dns.cache.used\",\"value\":$DnsCacheUsed ,\"type\":\"gauge\",\"timestamp\":$Timestamp},
 {\"name\":\"mikrotic.ip.dhcpserver.leases\",\"value\":$Leases,\"type\":\"gauge\",\"timestamp\":$Timestamp},
-{\"name\":\"mikrotic.ip.pool.used\",\"value\":$PoolUsed,\"type\":\"gauge\",\"timestamp\":$Timestamp}]}]" url="https://metric-api.eu.newrelic.com/metric/v1"
+{\"name\":\"mikrotic.ip.pool.used\",\"value\":$PoolUsed,\"type\":\"gauge\",\"timestamp\":$Timestamp}]}]" url="$NrMetricsUrl"
