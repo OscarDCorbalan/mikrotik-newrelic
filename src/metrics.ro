@@ -1,0 +1,42 @@
+:local NrApiKey "ABC"
+
+:local EpochTime do={
+   :local ds [/system clock get date];
+   :local months;
+   :if ((([:pick $ds 9 11]-1)/4) != (([:pick $ds 9 11])/4)) do={
+      :set months {"an"=0;"eb"=31;"ar"=60;"pr"=91;"ay"=121;"un"=152;"ul"=182;"ug"=213;"ep"=244;"ct"=274;"ov"=305;"ec"=335};
+   } else={
+      :set months {"an"=0;"eb"=31;"ar"=59;"pr"=90;"ay"=120;"un"=151;"ul"=181;"ug"=212;"ep"=243;"ct"=273;"ov"=304;"dec"=334};
+   }
+   :set ds (([:pick $ds 9 11]*365)+(([:pick $ds 9 11]-1)/4)+($months->[:pick $ds 1 3])+[:pick $ds 4 6]);
+   :local ts [/system clock get time];
+   :set ts (([:pick $ts 0 2]*60*60)+([:pick $ts 3 5]*60)+[:pick $ts 6 8]);
+   :return ($ds*24*60*60 + $ts + 946684800 - [/system clock get gmt-offset]);
+}
+
+:local CPULoad [/system resource get cpu-load];
+:local FreeMemory [/system resource get free-memory];
+:local TotalMemory [/system resource get total-memory];
+
+:local ConnectionsTcp [/ip firewall connection print count-only where protocol=tcp];
+:local ConnectionsUdp [/ip firewall connection print count-only where protocol=udp];
+:local TcpEstablished [/ip firewall connection print count-only where tcp-state=established];
+
+:local DnsCacheSize [/ip dns get cache-size];
+:local DnsCacheUsed [/ip dns get cache-used];
+:local Leases [/ip dhcp-server lease print active count-only];
+:local PoolUsed [/ip pool used print count-only];
+
+:local Timestamp [$EpochTime];
+
+/tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$NrApiKey" http-data="[{\"metrics\":[
+{\"name\":\"mikrotic.system.cpu.load\",\"value\":$CPULoad,\"type\":\"gauge\",\"timestamp\":$Timestamp},
+{\"name\":\"mikrotic.system.memory.total\",\"value\":$TotalMemory,\"type\":\"gauge\",\"timestamp\":$Timestamp},
+{\"name\":\"mikrotic.system.memory.free\",\"value\":$FreeMemory,\"type\":\"gauge\",\"timestamp\":$Timestamp},
+{\"name\":\"mikrotic.firewall.connection.tcp\",\"value\":$ConnectionsTcp,\"type\":\"gauge\",\"timestamp\":$Timestamp},
+{\"name\":\"mikrotic.firewall.connection.udp\",\"value\":$ConnectionsUdp,\"type\":\"gauge\",\"timestamp\":$Timestamp},
+{\"name\":\"mikrotic.firewall.connection.established\",\"value\":$TcpEstablished,\"type\":\"gauge\",\"timestamp\":$Timestamp},
+{\"name\":\"mikrotic.ip.dns.cache.size\",\"value\":$DnsCacheSize,\"type\":\"gauge\",\"timestamp\":$Timestamp},
+{\"name\":\"mikrotic.ip.dns.cache.used\",\"value\":$DnsCacheUsed ,\"type\":\"gauge\",\"timestamp\":$Timestamp},
+{\"name\":\"mikrotic.ip.dhcpserver.leases\",\"value\":$Leases,\"type\":\"gauge\",\"timestamp\":$Timestamp},
+{\"name\":\"mikrotic.ip.pool.used\",\"value\":$PoolUsed,\"type\":\"gauge\",\"timestamp\":$Timestamp}]}]" url="https://metric-api.eu.newrelic.com/metric/v1"
