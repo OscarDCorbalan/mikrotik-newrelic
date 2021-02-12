@@ -1,5 +1,7 @@
-:local NrApiKey "ABC"
-:local NrMetricsUrl "https://metric-api.eu.newrelic.com/metric/v1"
+:global NrApiKey;
+
+:local NrApiKey $NrApiKey;
+:local NrMetricsUrl "https://metric-api.eu.newrelic.com/metric/v1";
 
 :local EpochTime do={
    :local ds [/system clock get date];
