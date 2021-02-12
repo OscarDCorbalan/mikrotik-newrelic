@@ -1,0 +1,3 @@
+# Permissions: none required
+# Comment Sets new relic global api key as a global variable
+:global NR_API_KEY "Abc123"  # Get from ... TODO
