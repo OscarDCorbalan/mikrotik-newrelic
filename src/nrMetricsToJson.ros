@@ -1,10 +1,11 @@
 # searialize metrics object to NR metrics json
 # Params
 #   metrics
+#   timestamp
 # Returns
 #   String json representing a NR metric
 :global nrMetricsToJson do={
-  :local ret "[{\"metrics\":["
+  :local ret ("[{\"common\":{\"timestamp\":" . $timestamp . "},\"metrics\":[")
   :local firstIteration true
 
   :foreach k,metric in $metrics do={
