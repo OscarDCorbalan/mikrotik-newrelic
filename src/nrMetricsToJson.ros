@@ -4,7 +4,7 @@
 # Returns
 #   String json representing a NR metric
 :global nrMetricsToJson do={
-  :local ret "[\"metrics\":"
+  :local ret "[{\"metrics\":["
   :local firstIteration true
 
   :foreach k,metric in $metrics do={
@@ -31,10 +31,10 @@
           :set $ret ($ret . $v )
       };
     };
-    
+
     :set $ret ($ret . "}")
   };
 
-  :set $ret ($ret . "]")
+  :set $ret ($ret . "]}]")
   :return $ret;
 };
