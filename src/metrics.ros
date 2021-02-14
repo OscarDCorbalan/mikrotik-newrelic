@@ -7,22 +7,22 @@
 :local NrApiKey $NrApiKey;
 
 :local toMetric do={
-    :ret {"name"=$name; "value"=$value; "type"="gauge"; "timestamp"=$timestamp};
+    :ret {"name"=$name; "value"=$value; "type"="gauge"};
 }
 
 :local observedMetrics {
-    "mikrotic.system.cpu.load"=[/system resource get cpu-load];
-    "mikrotic.system.memory.total"=[/system resource get total-memory];
-    "mikrotic.system.memory.free"=[/system resource get free-memory];
+    "mikrotik.system.cpu.load"=[/system resource get cpu-load];
+    "mikrotik.system.memory.total"=[/system resource get total-memory];
+    "mikrotik.system.memory.free"=[/system resource get free-memory];
 
-    "mikrotic.firewall.connection.tcp"=[/ip firewall connection print count-only where protocol=tcp];
-    "mikrotic.firewall.connection.udp"=[/ip firewall connection print count-only where protocol=udp];
-    "mikrotic.firewall.connection.established"=[/ip firewall connection print count-only where tcp-state=established];
+    "mikrotik.firewall.connection.tcp"=[/ip firewall connection print count-only where protocol=tcp];
+    "mikrotik.firewall.connection.udp"=[/ip firewall connection print count-only where protocol=udp];
+    "mikrotik.firewall.connection.established"=[/ip firewall connection print count-only where tcp-state=established];
 
-    "mikrotic.ip.dns.cache.size"=[/ip dns get cache-size];
-    "mikrotic.ip.dns.cache.used"=[/ip dns get cache-used];
-    "mikrotic.ip.pool.used"=[/ip pool used print count-only];
-    "mikrotic.ip.dhcpserver.leases"=[/ip dhcp-server lease print active count-only];
+    "mikrotik.ip.dns.cache.size"=[/ip dns get cache-size];
+    "mikrotik.ip.dns.cache.used"=[/ip dns get cache-used];
+    "mikrotik.ip.pool.used"=[/ip pool used print count-only];
+    "mikrotik.ip.dhcpserver.leases"=[/ip dhcp-server lease print active count-only];
 };
 
 
