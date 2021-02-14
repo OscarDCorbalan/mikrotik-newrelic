@@ -16,6 +16,7 @@
     # parse each metric array
     :set ret ($ret . "{")
     :local isFirstMetricInArray true
+
     :foreach k,v in $metric do={
       if ($isFirstMetricInArray) do={
         :set $ret ($ret . "\"".$k . "\":")
@@ -30,9 +31,9 @@
           :set $ret ($ret . $v )
       };
     };
+    
     :set $ret ($ret . "}")
   };
-
 
   :set $ret ($ret . "]")
   :return $ret;
