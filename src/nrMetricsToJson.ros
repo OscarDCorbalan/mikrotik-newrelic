@@ -1,37 +1,9 @@
-# inspired by https://forum.mikrotik.com/viewtopic.php?t=120441#p790680
-
-# convert object to json
+# searialize metrics object to NR metrics json
 # Params
-#   metric
+#   metrics
 # Returns
 #   String json representing a NR metric
-:global nrMetricToJson do={
-  :global nrMetricToJson;
-  :local ret "{"
-  :local firstIteration true
-
-  :foreach k,v in $metric do={
-    if ($firstIteration) do={
-      :set $ret ($ret . "\"".$k . "\":")
-    } else={
-      :set $ret ($ret . "," . "\"". $k . "\":")
-    };
-    :set $firstIteration false
-
-    :if ([:typeof $v] = "str") do={
-        :set $ret ($ret . "\"" . $v . "\"")
-    } else {
-        :set $ret ($ret . $v )
-    };
-  };
-  :set $ret ($ret . "}")
-  :return $ret;
-};
-
-
-
 :global nrMetricsToJson do={
-  :global nrMetricToJson;
   :local ret "[\"metrics\":"
   :local firstIteration true
 
@@ -43,7 +15,7 @@
 
     # parse each metric array
     :set ret ($ret . "{")
-    :local isFirstMetricInArray true  
+    :local isFirstMetricInArray true
     :foreach k,v in $metric do={
       if ($isFirstMetricInArray) do={
         :set $ret ($ret . "\"".$k . "\":")
