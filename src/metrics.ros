@@ -25,6 +25,18 @@
     "mikrotik.ip.dhcpserver.leases"=[/ip dhcp-server lease print active count-only];
 };
 
+# We need to loop interfaces to set them in observedMetrics
+{
+    :foreach i in=[/interface find] do={
+        /interface monitor [/interface find where .id="$i"] once do={
+            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".tx-bps")) $"tx-bits-per-second";
+            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".rx-bps")) $"rx-bits-per-second";
+            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".fp-tx-bps")) $"fp-tx-bits-per-second";
+            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".fp-rx-bps")) $"fp-rx-bits-per-second";
+        };
+    }
+}
+
 
 :local metricsArray [:toarray ""];
 :foreach k,v in=$observedMetrics do={
