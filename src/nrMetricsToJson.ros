@@ -40,9 +40,28 @@
       :set $ret ($ret . ",")
     };
     :set $firstIteration false
+
     # parse each metric array
-    :set $ret ($ret . [$nrMetricToJson metric=$metric])
+    :set ret ($ret . "{")
+    :local isFirstMetricInArray true  
+    :foreach k,v in $metric do={
+      if ($isFirstMetricInArray) do={
+        :set $ret ($ret . "\"".$k . "\":")
+      } else={
+        :set $ret ($ret . "," . "\"". $k . "\":")
+      };
+      :set $isFirstMetricInArray false
+
+      :if ([:typeof $v] = "str") do={
+          :set $ret ($ret . "\"" . $v . "\"")
+      } else {
+          :set $ret ($ret . $v )
+      };
+    };
+    :set $ret ($ret . "}")
   };
+
+
   :set $ret ($ret . "]")
   :return $ret;
 };
