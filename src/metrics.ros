@@ -28,10 +28,10 @@
 
 :local metricsArray [:toarray ""];
 :foreach k,v in=$observedMetrics do={
-    :local metric [$toMetric name=$k value=$v timestamp=$timestamp];
+    :local metric [$toMetric name=$k value=$v];
     :set $metricsArray ($metricsArray , {$metric});
 }
 
-:local httpData [$nrMetricsToJson metrics=$metricsArray];
+:local httpData [$nrMetricsToJson metrics=$metricsArray timestamp=$timestamp];
 
 /tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$NrApiKey" http-data=$httpData url="https://metric-api.eu.newrelic.com/metric/v1"
