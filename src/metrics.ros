@@ -1,24 +1,37 @@
 # imports
 :global getTimestamp;
+:global nrMetricsToJson;
 :global NrApiKey;
 
-:local Timestamp [$getTimestamp];
+:local timestamp [$getTimestamp];
 :local NrApiKey $NrApiKey;
 
-:local CPULoad [/system resource get cpu-load];
-:local FreeMemory [/system resource get free-memory];
-:local TotalMemory [/system resource get total-memory];
+:local toMetric do={
+    :ret {"name"=$name; "value"=$value; "type"="gauge"; "timestamp"=$timestamp};
+}
 
-:local ConnectionsTcp [/ip firewall connection print count-only where protocol=tcp];
-:local ConnectionsUdp [/ip firewall connection print count-only where protocol=udp];
-:local TcpEstablished [/ip firewall connection print count-only where tcp-state=established];
+:local observedMetrics {
+    "mikrotic.system.cpu.load"=[/system resource get cpu-load];
+    "mikrotic.system.memory.total"=[/system resource get total-memory];
+    "mikrotic.system.memory.free"=[/system resource get free-memory];
 
-:local DnsCacheSize [/ip dns get cache-size];
-:local DnsCacheUsed [/ip dns get cache-used];
-:local Leases [/ip dhcp-server lease print active count-only];
-:local PoolUsed [/ip pool used print count-only];
+    "mikrotic.firewall.connection.tcp"=[/ip firewall connection print count-only where protocol=tcp];
+    "mikrotic.firewall.connection.udp"=[/ip firewall connection print count-only where protocol=udp];
+    "mikrotic.firewall.connection.established"=[/ip firewall connection print count-only where tcp-state=established];
+
+    "mikrotic.ip.dns.cache.size"=[/ip dns get cache-size];
+    "mikrotic.ip.dns.cache.used"=[/ip dns get cache-used];
+    "mikrotic.ip.pool.used"=[/ip pool used print count-only];
+    "mikrotic.ip.dhcpserver.leases"=[/ip dhcp-server lease print active count-only];
+};
 
 
-/tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$NrApiKey" http-data="[{\"metrics\":[{\"name\":\"mikrotic.system.cpu.load\",\"value\":$CPULoad,\"type\":\"gauge\",\"timestamp\":$Timestamp},{\"name\":\"mikrotic.system.memory.total\",\"value\":$TotalMemory,\"type\":\"gauge\",\"timestamp\":$Timestamp},{\"name\":\"mikrotic.system.memory.free\",\"value\":$FreeMemory,\"type\":\"gauge\",\"timestamp\":$Timestamp},{\"name\":\"mikrotic.firewall.connection.tcp\",\"value\":$ConnectionsTcp,\"type\":\"gauge\",\"timestamp\":$Timestamp},
-{\"name\":\"mikrotic.firewall.connection.udp\",\"value\":$ConnectionsUdp,\"type\":\"gauge\",\"timestamp\":$Timestamp},
-{\"name\":\"mikrotic.firewall.connection.established\",\"value\":$TcpEstablished,\"type\":\"gauge\",\"timestamp\":$Timestamp},{\"name\":\"mikrotic.ip.dns.cache.size\",\"value\":$DnsCacheSize,\"type\":\"gauge\",\"timestamp\":$Timestamp},{\"name\":\"mikrotic.ip.dns.cache.used\",\"value\":$DnsCacheUsed ,\"type\":\"gauge\",\"timestamp\":$Timestamp},{\"name\":\"mikrotic.ip.dhcpserver.leases\",\"value\":$Leases,\"type\":\"gauge\",\"timestamp\":$Timestamp},{\"name\":\"mikrotic.ip.pool.used\",\"value\":$PoolUsed,\"type\":\"gauge\",\"timestamp\":$Timestamp}]}]" url="https://metric-api.eu.newrelic.com/metric/v1"
+:local metricsArray [:toarray ""];
+:foreach k,v in=$observedMetrics do={
+    :local metric [$toMetric name=$k value=$v timestamp=$timestamp];
+    :set $metricsArray ($metricsArray , {$metric});
+}
+
+:local httpData [$nrMetricsToJson metrics=$metricsArray];
+
+/tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$NrApiKey" http-data=$httpData url="https://metric-api.eu.newrelic.com/metric/v1"
