@@ -17,7 +17,7 @@
     "mikrotik.system.memory.free"=[/system resource get free-memory];
     "mikrotik.ip.pool.used"=[/ip pool used print count-only];
 
-# Optional:
+# Optional metrics, remove them or add more in this sction:
     "mikrotik.ip.dns.cache.size"=[/ip dns get cache-size];
     "mikrotik.ip.dns.cache.used"=[/ip dns get cache-used];
     "mikrotik.ip.dhcpserver.leases"=[/ip dhcp-server lease print active count-only];
