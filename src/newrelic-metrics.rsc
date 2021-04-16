@@ -6,17 +6,18 @@
 
 ##### START CONFIG ##############################################
 
-:local NrApiKey "NRII-Abc123" # TODO Retrieve your New Relic API key from ...link here...
+# TODO Retrieve your New Relic API key from ...link here...
+:local NrApiKey "NRII-Abc123"
 
 :local observedMetrics {
-    # Required by New Relic to Synthesize the metrics as a Mikrotik router
-    # Do not delete these 4 metrics
+# Required by New Relic to Synthesize the metrics as a Mikrotik router
+# Do not delete these 4 metrics
     "mikrotik.system.cpu.load"=[/system resource get cpu-load];
     "mikrotik.system.memory.total"=[/system resource get total-memory];
     "mikrotik.system.memory.free"=[/system resource get free-memory];
     "mikrotik.ip.pool.used"=[/ip pool used print count-only];
 
-    # Optional:
+# Optional:
     "mikrotik.ip.dns.cache.size"=[/ip dns get cache-size];
     "mikrotik.ip.dns.cache.used"=[/ip dns get cache-used];
     "mikrotik.ip.dhcpserver.leases"=[/ip dhcp-server lease print active count-only];
