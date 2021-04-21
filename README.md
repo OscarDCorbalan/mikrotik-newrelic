@@ -10,11 +10,13 @@
     - Paste your API Key as the `nrApiKey` value.
     - There are two `metricsUrl` variables, one of them commented out. One is for the US region
       and the other one is for the Europe region. Use the one that matches the region of your
-      NR account
-    -
+      NR account.
+    - Click OK to save it.
   - Go to `System > Scripts`, click `Add New`.
-    - Set `Start time = startup`
-    - Set interval to 00:00:15
+    - Set `Start Time` to `startup`.
+    - Set the `Interval` to `00:00:15`, so that it runs and sends metrics every 15 seconds. You can always adjust it later to
+      any value you prefer.
+    - Click OK to save it.
 
 ## Contributions are welcome :)
 
