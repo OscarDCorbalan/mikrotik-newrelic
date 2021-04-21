@@ -1,17 +1,21 @@
 ################################################################################
-# Name: newrelic-metrocs.ros                                                   #
+# Name: newrelic-metrics                                                       #
 # Policy: Ftp, Read, Write, Policy, Test                                       #
 # Comment: Send metric data to New Relic                                       #
 ################################################################################
 
 ##### START CONFIG ##############################################
 
-# TODO Retrieve your New Relic API key from ...link here...
-:local NrApiKey "NRII-Abc123"
+# Retrieve your New Relic API key -see README.
+:local nrApiKey "NRII-Abc123"
+
+# Use the commented-out URL if you set your NR region in US instead of Europe
+# :local metricsUrl "https://metric-api.newrelic.com/metric/v1"
+:local metricsUrl "https://metric-api.eu.newrelic.com/metric/v1"
 
 :local observedMetrics {
 # Required by New Relic to Synthesize the metrics as a Mikrotik router
-# Do not delete these 4 metrics
+# Do not delete these metrics
     "mikrotik.system.cpu.load"=[/system resource get cpu-load];
     "mikrotik.system.memory.total"=[/system resource get total-memory];
     "mikrotik.system.memory.free"=[/system resource get free-memory];
@@ -21,7 +25,6 @@
     "mikrotik.ip.dns.cache.size"=[/ip dns get cache-size];
     "mikrotik.ip.dns.cache.used"=[/ip dns get cache-used];
     "mikrotik.ip.dhcpserver.leases"=[/ip dhcp-server lease print active count-only];
-
     "mikrotik.firewall.connection.tcp"=[/ip firewall connection print count-only where protocol=tcp];
     "mikrotik.firewall.connection.udp"=[/ip firewall connection print count-only where protocol=udp];
     "mikrotik.firewall.connection.established"=[/ip firewall connection print count-only where tcp-state=established];
@@ -119,6 +122,6 @@
 
 :local httpData [$nrMetricsToJson metrics=$metricsArray timestamp=$timestamp];
 
-/tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$NrApiKey" http-data=$httpData url="https://metric-api.eu.newrelic.com/metric/v1"
+/tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$nrApiKey" http-data=$httpData url="https://metric-api.eu.newrelic.com/metric/v1"
 
 ##### END PROCESSING observedMetrics ############################

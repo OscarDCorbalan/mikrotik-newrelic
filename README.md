@@ -7,6 +7,11 @@
   - Go to `System > Scripts`, click `Add New`.
     - Copy the content of [newrelic-metrics.rsc](src/newrelic-metrics.rsc) in the `Source` field.
     - Set the `Name` and `Policy` fields as described in that file.
+    - Paste your API Key as the `nrApiKey` value.
+    - There are two `metricsUrl` variables, one of them commented out. One is for the US region
+      and the other one is for the Europe region. Use the one that matches the region of your
+      NR account
+    -
   - Go to `System > Scripts`, click `Add New`.
     - Set `Start time = startup`
     - Set interval to 00:00:15
