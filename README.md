@@ -16,7 +16,11 @@
     - Set `Start time = startup`
     - Set interval to 00:00:15
 
+## Contributions are welcome :)
+
+Either posting in the Issues tab or Opening PRs are very welcome.
 
 ## Docs
 
-Report metrics via the Metric API: https://docs.newrelic.com/docs/telemetry-data-platform/ingest-manage-data/ingest-apis/report-metrics-metric-api/
+- [New Relic's Metric API](https://docs.newrelic.com/docs/telemetry-data-platform/ingest-manage-data/ingest-apis/report-metrics-metric-api/)
+- [Mikrotik scripting](https://wiki.mikrotik.com/wiki/Scripts)
