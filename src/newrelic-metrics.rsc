@@ -15,10 +15,10 @@
 
 # These tags are added to the metrics to add extra info or identify different routers posting to the same NR account
 :local attributes {
+    "mikrotik.serialnumber"=[/system routerboard get serial-number]
     "mikrotik.model"=[/system routerboard get model];
     "mikrotik.currentfirmware"=[/system routerboard get current-firmware];
     "mikrotik.upgradefirmware"=[/system routerboard get upgrade-firmware];
-    "mikrotik.serialnumber"=[/system routerboard get serial-number]
 }
 
 :local observedMetrics {
@@ -76,7 +76,8 @@
 # @param {number} timestamp
 # @returns {string} Json string representing a New Relic-formatted metric
 :local nrMetricsToJson do={
-  :local ret ("[{\"common\":{$attributes},\"metrics\":[")
+
+  :local ret ("[{\"common\":{$common},\"metrics\":[")
   :local firstIteration true
 
   :foreach k,metric in $metrics do={
@@ -111,16 +112,17 @@
   :return $ret;
 };
 
-:local toMetric do={
-    :ret {"name"=$name; "value"=$value; "type"="gauge"};
-}
-
-:local toAttribute do= {
+:local toAttributesJson do= {
     :local ret ""
     :foreach k,v in=$attributes do={
         :set $ret ($ret . "\"" . $k . "\":\"" . $v . "\"" . ",");
     }
-    :return $ret;
+    :set $ret [:pick $ret 0 ([:len $ret] - 1)]
+    :return "\"attributes\":{$ret}";
+}
+
+:local toMetric do={
+    :ret {"name"=$name; "value"=$value; "type"="gauge"};
 }
 
 ##### END HELPER METHODS ########################################
@@ -128,8 +130,8 @@
 
 ##### START PROCESSING observedMetrics ##########################
 
-:set $attributes [$toAttribute attributes=$attributes]
-:set $attributes ($attributes . "\"timestamp\":" . [$getTimestamp])
+:set $attributes [$toAttributesJson attributes=$attributes]
+:set $common ("$attributes,\"timestamp\":$[$getTimestamp]")
 
 :local metricsArray [:toarray ""];
 :foreach k,v in=$observedMetrics do={
@@ -137,7 +139,7 @@
     :set $metricsArray ($metricsArray , {$metric});
 }
 
-:local httpData [$nrMetricsToJson metrics=$metricsArray attributes=$attributes];
+:local httpData [$nrMetricsToJson metrics=$metricsArray common=$common];
 
 /tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$NRAPIKEY" http-data=$httpData url=$METRICSURL
 
