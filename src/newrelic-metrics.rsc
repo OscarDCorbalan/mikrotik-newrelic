@@ -7,11 +7,11 @@
 ##### START CONFIG ##############################################
 
 # Retrieve your New Relic API key -see README.
-:local NR_API_KEY "NRII-Abc123"
+:local NRAPIKEY "NRII-Abc123"
 
 # Use the commented-out URL if you set your NR region in US instead of Europe
-# :local METRICS_URL "https://metric-api.newrelic.com/metric/v1"
-:local METRICS_URL "https://metric-api.eu.newrelic.com/metric/v1"
+# :local METRICSURL "https://metric-api.newrelic.com/metric/v1"
+:local METRICSURL "https://metric-api.eu.newrelic.com/metric/v1"
 
 # These tags are added to the metrics to add extra info or identify different routers posting to the same NR account
 :local attributes {
@@ -139,6 +139,6 @@
 
 :local httpData [$nrMetricsToJson metrics=$metricsArray attributes=$attributes];
 
-/tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$NR_API_KEY" http-data=$httpData url=$METRICS_URL
+/tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$NRAPIKEY" http-data=$httpData url=$METRICSURL
 
 ##### END PROCESSING observedMetrics ############################
