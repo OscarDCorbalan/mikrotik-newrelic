@@ -13,31 +13,33 @@
 # :local metricsUrl "https://metric-api.newrelic.com/metric/v1"
 :local metricsUrl "https://metric-api.eu.newrelic.com/metric/v1"
 
+
+
 :local observedMetrics {
 # Required by New Relic to Synthesize the metrics as a Mikrotik router
 # Do not delete these metrics
-    "mikrotik_system_cpu_load"=[/system resource get cpu-load];
-    "mikrotik_system_memory_total"=[/system resource get total-memory];
-    "mikrotik_system_memory_free"=[/system resource get free-memory];
-    "mikrotik_ip_pool_used"=[/ip pool used print count-only];
+    "mikrotik.system.cpu.load"=[/system resource get cpu-load];
+    "mikrotik.system.memory.total"=[/system resource get total-memory];
+    "mikrotik.system.memory.free"=[/system resource get free-memory];
+    "mikrotik.ip.pool.used"=[/ip pool used print count-only];
 
 # Optional metrics, remove them or add more in this sction:
-    "mikrotik_ip_dns_cache_size"=[/ip dns get cache-size];
-    "mikrotik_ip_dns_cache_used"=[/ip dns get cache-used];
-    "mikrotik_ip_dhcpserver_leases"=[/ip dhcp-server lease print active count-only];
-    "mikrotik_firewall_connection_tcp"=[/ip firewall connection print count-only where protocol=tcp];
-    "mikrotik_firewall_connection_udp"=[/ip firewall connection print count-only where protocol=udp];
-    "mikrotik_firewall_connection_established"=[/ip firewall connection print count-only where tcp-state=established];
+    "mikrotik.ip.dns.cache.size"=[/ip dns get cache-size];
+    "mikrotik.ip.dns.cache.used"=[/ip dns get cache-used];
+    "mikrotik.ip.dhcpserver.leases"=[/ip dhcp-server lease print active count-only];
+    "mikrotik.firewall.connection.tcp"=[/ip firewall connection print count-only where protocol=tcp];
+    "mikrotik.firewall.connection.udp"=[/ip firewall connection print count-only where protocol=udp];
+    "mikrotik.firewall.connection.established"=[/ip firewall connection print count-only where tcp-state=established];
 };
 
 # More optional metrics, to send throughputs of each interface:
 {
     :foreach i in=[/interface find] do={
         /interface monitor [/interface find where .id="$i"] once do={
-            :set ($observedMetrics->("mikrotik_interface_" . $"name" . "_txbps")) $"tx-bits-per-second";
-            :set ($observedMetrics->("mikrotik_interface_" . $"name" . "_rxbps")) $"rx-bits-per-second";
-            :set ($observedMetrics->("mikrotik_interface_" . $"name" . "_fptxbps")) $"fp-tx-bits-per-second";
-            :set ($observedMetrics->("mikrotik_interface_" . $"name" . "_fprxbps")) $"fp-rx-bits-per-second";
+            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".txbps")) $"tx-bits-per-second";
+            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".rxbps")) $"rx-bits-per-second";
+            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".fptxbps")) $"fp-tx-bits-per-second";
+            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".fprxbps")) $"fp-rx-bits-per-second";
         };
     }
 }
@@ -68,7 +70,7 @@
 # @param {number} timestamp
 # @returns {string} Json string representing a New Relic-formatted metric
 :local nrMetricsToJson do={
-  :local ret ("[{\"common\":{\"timestamp\":" . $timestamp . "},\"metrics\":[")
+  :local ret ("[{\"common\":{$attributes},\"metrics\":[")
   :local firstIteration true
 
   :foreach k,metric in $metrics do={
@@ -112,7 +114,6 @@
 
 ##### START PROCESSING observedMetrics ##########################
 
-:local timestamp [$getTimestamp];
 
 :local metricsArray [:toarray ""];
 :foreach k,v in=$observedMetrics do={
@@ -120,7 +121,7 @@
     :set $metricsArray ($metricsArray , {$metric});
 }
 
-:local httpData [$nrMetricsToJson metrics=$metricsArray timestamp=$timestamp];
+:local httpData [$nrMetricsToJson metrics=$metricsArray attributes=$attributes];
 
 /tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$nrApiKey" http-data=$httpData url="https://metric-api.eu.newrelic.com/metric/v1"
 
