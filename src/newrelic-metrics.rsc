@@ -13,7 +13,13 @@
 # :local metricsUrl "https://metric-api.newrelic.com/metric/v1"
 :local metricsUrl "https://metric-api.eu.newrelic.com/metric/v1"
 
-
+# These tags are added to the metrics to add extra info or identify different routers posting to the same NR account
+:local attributes {
+    "model"=[/system routerboard get model];
+    "current.firmware"=[/system routerboard get current-firmware];
+    "upgrade.firmware"=[/system routerboard get upgrade-firmware];
+    "serial.number"=[/system routerboard get serial-number]
+}
 
 :local observedMetrics {
 # Required by New Relic to Synthesize the metrics as a Mikrotik router
@@ -109,11 +115,21 @@
     :ret {"name"=$name; "value"=$value; "type"="gauge"};
 }
 
+:local toAttribute do= {
+    :local ret ""
+    :foreach k,v in=$attributes do={
+        :set $ret ($ret . "\"" . $k . "\":\"" . $v . "\"" . ",");
+    }
+    :return $ret;
+}
+
 ##### END HELPER METHODS ########################################
 
 
 ##### START PROCESSING observedMetrics ##########################
 
+:set $attributes [$toAttribute attributes=$attributes]
+:set $attributes ($attributes . "\"timestamp\":" . [$getTimestamp])
 
 :local metricsArray [:toarray ""];
 :foreach k,v in=$observedMetrics do={
