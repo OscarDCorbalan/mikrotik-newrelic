@@ -128,7 +128,7 @@
 ##### END HELPER METHODS ########################################
 
 
-##### START PROCESSING observedMetrics ##########################
+##### START PROCESSING ##########################################
 
 :set $attributes [$toAttributesJson attributes=$attributes]
 :set $common ("$attributes,\"timestamp\":$[$getTimestamp]")
@@ -143,4 +143,4 @@
 
 /tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$NRAPIKEY" http-data=$httpData url=$METRICSURL
 
-##### END PROCESSING observedMetrics ############################
+##### END PROCESSING ############################################
