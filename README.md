@@ -17,6 +17,7 @@
     - Set the `Interval` to `00:00:15`, so that it runs and sends metrics every 15 seconds. You can always adjust it later to
       any value you prefer.
     - Click OK to save it.
+  - Reboot your router -so that the `startup` hook is fired and the scheduler starts calling the script.
 
 ## Debugging (not seeing data in New Relic)
 
