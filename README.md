@@ -18,6 +18,18 @@
       any value you prefer.
     - Click OK to save it.
 
+## Debugging (not seeing data in New Relic)
+
+If you can't see the data in the Data Explorer, try to:
+
+1. In New Relic, go to Data Explorer => Events tab
+  - Look for the NrIntegrationError table -if the API is receiving the POSTs and rejecting the data, you can see the reason there.
+1. Run the script manually in your router console  
+  - Login to the router's web GUI
+  - Click Terminal at top right
+  - Type `system script run newrelic-metrics` and press Enter.
+  - It will run the script once -if there's a script error, or an HTTP error when sending the data, you can see it there.
+
 ## Contributions are welcome :)
 
 Either posting in the Issues tab or Opening PRs are very welcome.
