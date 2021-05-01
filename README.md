@@ -12,7 +12,7 @@
       and the other one is for the Europe region. Use the one that matches the region of your
       NR account.
     - Click OK to save it.
-  - Go to `System > Scripts`, click `Add New`.
+  - Go to `System > Scheduler`, click `Add New`.
     - Set `Start Time` to `startup`.
     - Set the `Interval` to `00:00:15`, so that it runs and sends metrics every 15 seconds. You can always adjust it later to
       any value you prefer.
