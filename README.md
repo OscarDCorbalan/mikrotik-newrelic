@@ -18,6 +18,10 @@
       any value you prefer.
     - Click OK to save it.
   - Reboot your router -so that the `startup` hook is fired and the scheduler starts calling the script.
+1. After the script has run and sent data at least once, you can check if New Relic is getting the data:
+  - Open the Data Explorer ("Query your data" button at top navigation).
+  - Make sure you are in the Metrics tab.
+  - Use the input to filter by `mikrotik` (as all data is dumped with that string at the start)
 
 ## Debugging (not seeing data in New Relic)
 
