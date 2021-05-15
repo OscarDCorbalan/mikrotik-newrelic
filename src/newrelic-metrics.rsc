@@ -20,6 +20,7 @@
     "mikrotik.model"=[/system routerboard get model];
     "mikrotik.currentfirmware"=[/system routerboard get current-firmware];
     "mikrotik.upgradefirmware"=[/system routerboard get upgrade-firmware];
+    "mikrotik.boardname"=[/system resource get board-name];
 }
 
 :local observedMetrics {
