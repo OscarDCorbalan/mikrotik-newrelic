@@ -15,6 +15,7 @@
 
 # These tags are added to the metrics to add extra info or identify different routers posting to the same NR account
 :local attributes {
+    "instrumentation.provider"="mikrotik";
     "mikrotik.serialnumber"=[/system routerboard get serial-number]
     "mikrotik.model"=[/system routerboard get model];
     "mikrotik.currentfirmware"=[/system routerboard get current-firmware];
