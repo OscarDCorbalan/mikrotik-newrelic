@@ -50,6 +50,8 @@
             :set ($observedMetrics->("mikrotik.interface." . $"name" . ".rxbps")) $"rx-bits-per-second";
             :set ($observedMetrics->("mikrotik.interface." . $"name" . ".fptxbps")) $"fp-tx-bits-per-second";
             :set ($observedMetrics->("mikrotik.interface." . $"name" . ".fprxbps")) $"fp-rx-bits-per-second";
+            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".txerrorsps")) $"tx-errors-per-second";
+            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".rxerrorsps")) $"rx-errors-per-second";
         };
     }
 }
