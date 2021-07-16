@@ -9,11 +9,11 @@
 # Retrieve your New Relic API key -see README.
 :local NRAPIKEY "NRII-Abc123"
 
-# Use the commented-out URL if you set your NR region in US instead of Europe
+# Use the commented-out URL if your NR region is set to US instead of Europe
 # :local METRICSURL "https://metric-api.newrelic.com/metric/v1"
 :local METRICSURL "https://metric-api.eu.newrelic.com/metric/v1"
 
-# These tags are added to the metrics to add extra info or identify different routers posting to the same NR account
+# These are attached as tags to the entity created in NR for the router
 :local attributes {
     "instrumentation.provider"="mikrotik-router";
     "instrumentation.version"="1.0.0";
@@ -25,15 +25,12 @@
     "mikrotik.upgradefirmware"=[/system routerboard get upgrade-firmware];
 }
 
+# These are metrics of the entity created in NR -can be charted, used for alerting, etc
 :local observedMetrics {
-# Required by New Relic to Synthesize the metrics as a Mikrotik router
-# Do not delete these metrics
     "mikrotik.system.cpu.load"=[/system resource get cpu-load];
     "mikrotik.system.memory.total"=[/system resource get total-memory];
     "mikrotik.system.memory.free"=[/system resource get free-memory];
     "mikrotik.ip.pool.used"=[/ip pool used print count-only];
-
-# Optional metrics, remove them or add more in this sction:
     "mikrotik.ip.dns.cache.size"=[/ip dns get cache-size];
     "mikrotik.ip.dns.cache.used"=[/ip dns get cache-used];
     "mikrotik.ip.dhcpserver.leases"=[/ip dhcp-server lease print active count-only];
@@ -42,7 +39,7 @@
     "mikrotik.firewall.connection.established"=[/ip firewall connection print count-only where tcp-state=established];
 };
 
-# More optional metrics, to send throughputs of each interface:
+# Loop all interfaces to add their throughputs to "observedMetrics"
 {
     :foreach i in=[/interface find] do={
         /interface monitor [/interface find where .id="$i"] once do={
@@ -134,7 +131,7 @@
 ##### END HELPER METHODS ########################################
 
 
-##### START PROCESSING observedMetrics ##########################
+##### START ACTUAL PROCESSING ###################################
 
 :set $attributes [$toAttributesJson attributes=$attributes]
 :set $common ("$attributes,\"timestamp\":$[$getTimestamp]")
@@ -149,4 +146,4 @@
 
 /tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$NRAPIKEY" http-data=$httpData url=$METRICSURL
 
-##### END PROCESSING observedMetrics ############################
+##### END ACTUAL PROCESSING #####################################
