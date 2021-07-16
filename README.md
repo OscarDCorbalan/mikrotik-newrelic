@@ -1,5 +1,11 @@
 # mikrotik-newrelic
 
+Summary:
+- [What do you get?](#what-do-you-get)
+- [Instructions](#instructions)
+- [Debugging](#debugging)
+- [Docs](#docs)
+
 ## What do you get?
 
 Out of the box functionality with New Relic:
@@ -9,7 +15,7 @@ Out of the box functionality with New Relic:
 
 ![Explorer](images/explorer.jpg)
 
-![Entity Overview](images/entity.png)
+![Entity Overview](images/entity.jpg)
 
 ![Data Explorer](images/data-explorer.jpg)
 
@@ -39,7 +45,9 @@ Out of the box functionality with New Relic:
    - Make sure you are in the Metrics tab.
    - Use the input to filter by `mikrotik` (as all data is dumped with that string at the start)
 
-## Debugging (not seeing data in New Relic)
+## Debugging
+
+**Not seeing data in New Relic?**
 
 If you can't see the data in the Data Explorer, try to:
 
