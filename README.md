@@ -1,8 +1,23 @@
 # mikrotik-newrelic
 
+## What do you get?
+
+Out of the box functionality with New Relic:
+- An entity is created for your each one of your router/s.
+- A default overview with charts for CPU, memory, throughput, ...
+- Metrics and tags attached to the entity, which can be used to query and further explore data.
+
+![Explorer](images/explorer.jpg)
+
+![Entity Overview](images/entity.png)
+
+![Data Explorer](images/data-explorer.jpg)
+
+## Instructions
+
 1. Create a New Relic account if not having one already.
 1. Follow the steps under _Register an Insert API key_ in this documentatation:
-   - https://docs.newrelic.com/docs/telemetry-data-platform/ingest-manage-data/ingest-apis/introduction-event-api/#register 
+   - https://docs.newrelic.com/docs/telemetry-data-platform/ingest-manage-data/ingest-apis/introduction-event-api/#register
 1. Login to your Mikrotik router:
    - Go to `System > Scripts`, click `Add New`.
      - Copy the content of [newrelic-metrics.rsc](src/newrelic-metrics.rsc) in the `Source` field.
@@ -18,6 +33,7 @@
        any value you prefer.
      - Click OK to save it.
    - Reboot your router -so that the `startup` hook is fired and the scheduler starts calling the script.
+![Mikrotik scheduler](images/mikrotik-scheduler-new-relic.png)
 1. After the script has run and sent data at least once, you can check if New Relic is getting the data:
    - Open the Data Explorer ("Query your data" button at top navigation).
    - Make sure you are in the Metrics tab.
@@ -44,4 +60,3 @@ Either posting in the Issues tab or Opening PRs are very welcome.
 - [New Relic's Metric API](https://docs.newrelic.com/docs/telemetry-data-platform/ingest-manage-data/ingest-apis/report-metrics-metric-api/)
 - [New Relic's Entity Synthesis](https://github.com/newrelic-experimental/entity-synthesis-definitions)
 - [Mikrotik scripting](https://wiki.mikrotik.com/wiki/Scripts)
-
