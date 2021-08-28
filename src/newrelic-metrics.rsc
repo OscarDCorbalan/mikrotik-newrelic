@@ -16,7 +16,7 @@
 # These are attached as tags to the entity created in NR for the router
 :local attributes {
     "instrumentation.provider"="mikrotik-router";
-    "instrumentation.version"="1.0.0";
+    "instrumentation.version"="1.1.0";
     "mikrotik.name"=[/system identity get name];
     "mikrotik.boardname"=[/system resource get board-name];
     "mikrotik.serialnumber"=[/system routerboard get serial-number]
@@ -30,6 +30,7 @@
     "mikrotik.system.cpu.load"=[/system resource get cpu-load];
     "mikrotik.system.memory.total"=[/system resource get total-memory];
     "mikrotik.system.memory.free"=[/system resource get free-memory];
+    "mikrotik.system.memory.load"=100 - (100 * [/system resource get free-memory] / [/system resource get total-memory])
     "mikrotik.ip.pool.used"=[/ip pool used print count-only];
     "mikrotik.ip.dns.cache.size"=[/ip dns get cache-size];
     "mikrotik.ip.dns.cache.used"=[/ip dns get cache-used];
