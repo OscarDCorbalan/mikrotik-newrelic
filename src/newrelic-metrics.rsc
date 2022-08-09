@@ -126,7 +126,7 @@
 }
 
 :local toMetric do={
-    :ret {"name"=$name; "value"=$value; "type"="gauge"};
+    :return {"name"=$name; "value"=$value; "type"="gauge"};
 }
 
 ##### END HELPER METHODS ########################################
