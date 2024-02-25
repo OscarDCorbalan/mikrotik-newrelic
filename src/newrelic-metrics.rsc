@@ -6,7 +6,6 @@
 
 ##### START CONFIG ##############################################
 
-
 # Retrieve your New Relic API key -see README.
 :local NRAPIKEY "NRII-Abc123"
 
