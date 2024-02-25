@@ -23,6 +23,7 @@
     "mikrotik.model"=[/system routerboard get model];
     "mikrotik.currentfirmware"=[/system routerboard get current-firmware];
     "mikrotik.upgradefirmware"=[/system routerboard get upgrade-firmware];
+    "mikrotik.ip"=[/ip address get [find interface="ether1"] address];
 }
 
 # These are metrics of the entity created in NR -can be charted, used for alerting, etc
@@ -31,7 +32,6 @@
     "mikrotik.system.memory.total"=[/system resource get total-memory];
     "mikrotik.system.memory.free"=[/system resource get free-memory];
     "mikrotik.system.memory.load"=100 - (100 * [/system resource get free-memory] / [/system resource get total-memory])
-    "mikrotik.ip"=[/ip address get [find interface="ether1"] address];
     "mikrotik.ip.pool.used"=[/ip pool used print count-only];
     "mikrotik.ip.dns.cache.size"=[/ip dns get cache-size];
     "mikrotik.ip.dns.cache.used"=[/ip dns get cache-used];
