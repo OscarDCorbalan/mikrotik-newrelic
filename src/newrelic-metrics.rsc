@@ -49,8 +49,8 @@
             :set ($observedMetrics->("mikrotik.interface." . $"name" . ".rxbps")) $"rx-bits-per-second";
             :set ($observedMetrics->("mikrotik.interface." . $"name" . ".fptxbps")) $"fp-tx-bits-per-second";
             :set ($observedMetrics->("mikrotik.interface." . $"name" . ".fprxbps")) $"fp-rx-bits-per-second";
-            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".txerrorsps")) $"tx-errors-per-second";
-            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".rxerrorsps")) $"rx-errors-per-second";
+#            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".txerrorsps")) $"tx-errors-per-second";    # commented due to no value wchich brakes json structure, maybe it should be replaced by 0 insted of empty string
+#            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".rxerrorsps")) $"rx-errors-per-second";    # same as above
         };
     }
 }
