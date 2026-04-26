@@ -19,7 +19,7 @@
     "instrumentation.version"="1.2.0";
     "mikrotik.name"=[/system identity get name];
     "mikrotik.boardname"=[/system resource get board-name];
-    "mikrotik.serialnumber"=[/system routerboard get serial-number]
+    "mikrotik.serialnumber"=[/system routerboard get serial-number];
     "mikrotik.model"=[/system routerboard get model];
     "mikrotik.currentfirmware"=[/system routerboard get current-firmware];
     "mikrotik.upgradefirmware"=[/system routerboard get upgrade-firmware];
@@ -31,7 +31,7 @@
     "mikrotik.system.cpu.load"=[/system resource get cpu-load];
     "mikrotik.system.memory.total"=[/system resource get total-memory];
     "mikrotik.system.memory.free"=[/system resource get free-memory];
-    "mikrotik.system.memory.load"=100 - (100 * [/system resource get free-memory] / [/system resource get total-memory])
+    "mikrotik.system.memory.load"=100 - (100 * [/system resource get free-memory] / [/system resource get total-memory]);
     "mikrotik.ip.pool.used"=[/ip pool used print count-only];
     "mikrotik.ip.dns.cache.size"=[/ip dns get cache-size];
     "mikrotik.ip.dns.cache.used"=[/ip dns get cache-used];
@@ -44,13 +44,15 @@
 # Loop all interfaces to add their throughputs to "observedMetrics"
 {
     :foreach i in=[/interface find] do={
-        /interface monitor [/interface find where .id="$i"] once do={
-            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".txbps")) $"tx-bits-per-second";
-            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".rxbps")) $"rx-bits-per-second";
-            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".fptxbps")) $"fp-tx-bits-per-second";
-            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".fprxbps")) $"fp-rx-bits-per-second";
-#            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".txerrorsps")) $"tx-errors-per-second";    # commented due to no value wchich brakes json structure, maybe it should be replaced by 0 insted of empty string
-#            :set ($observedMetrics->("mikrotik.interface." . $"name" . ".rxerrorsps")) $"rx-errors-per-second";    # same as above
+        :local interfaceName [:put [/interface get $i name]];
+        :local interfaceId $i;
+        :interface monitor $interfaceId once do={
+            :set ($observedMetrics->("mikrotik.interface." . $interfaceName . ".txbps")) $"tx-bits-per-second";
+            :set ($observedMetrics->("mikrotik.interface." . $interfaceName . ".rxbps")) $"rx-bits-per-second";
+            :set ($observedMetrics->("mikrotik.interface." . $interfaceName . ".fptxbps")) $"fp-tx-bits-per-second";
+            :set ($observedMetrics->("mikrotik.interface." . $interfaceName . ".fprxbps")) $"fp-rx-bits-per-second";
+#            :set ($observedMetrics->("mikrotik.interface." . $interfaceName . ".txerrorsps")) $"tx-errors-per-second";    # commented due to no value which brakes json structure, maybe it should be replaced by 0 instead of empty string
+#            :set ($observedMetrics->("mikrotik.interface." . $interfaceName . ".rxerrorsps")) $"rx-errors-per-second";    # same as above
         };
     }
 }
@@ -63,70 +65,69 @@
 # Calculates a millisecond-based timestamp value
 # @returns Timestamp value
 :local getTimestamp do={
-  :return (1000 * [:tonum [:timestamp]])
+  :return (1000 * [:tonum [:timestamp]]);
 };
 
-# Searializes a metrics object to NR metrics json format
+# Serializes a metrics object to NR metrics json format
 # @param {object} metrics
 # @param {number} timestamp
 # @returns {string} Json string representing a New Relic-formatted metric
 :local nrMetricsToJson do={
-
-  :local ret ("[{\"common\":{$common},\"metrics\":[")
-  :local firstIteration true
+  :local ret ("[{\"common\":{$common},\"metrics\":[");
+  :local firstIteration true;
 
   :foreach k,metric in $metrics do={
     if (!$firstIteration) do={
-      :set $ret ($ret . ",")
+      :set $ret ($ret . ",");
     };
-    :set $firstIteration false
+    :set $firstIteration false;
 
     # parse each metric array
-    :set ret ($ret . "{")
-    :local isFirstMetricInArray true
+    :set ret ($ret . "{");
+    :local isFirstMetricInArray true;
 
     :foreach k,v in $metric do={
       if ($isFirstMetricInArray) do={
-        :set $ret ($ret . "\"".$k . "\":")
+        :set $ret ($ret . "\"".$k . "\":");
       } else={
-        :set $ret ($ret . "," . "\"". $k . "\":")
+        :set $ret ($ret . "," . "\"". $k . "\":");
       };
-      :set $isFirstMetricInArray false
+      :set $isFirstMetricInArray false;
 
       :if ([:typeof $v] = "str") do={
-          :set $ret ($ret . "\"" . $v . "\"")
+        :set $ret ($ret . "\"" . $v . "\"");
       } else {
-          :set $ret ($ret . $v )
+        :set $ret ($ret . $v);
       };
     };
 
-    :set $ret ($ret . "}")
+    :set $ret ($ret . "}");
   };
 
-  :set $ret ($ret . "]}]")
+  :set $ret ($ret . "]}]");
   :return $ret;
 };
 
-:local toAttributesJson do= {
-    :local ret ""
+:local toAttributesJson do={
+    :local ret "";
     :foreach k,v in=$attributes do={
         :set $ret ($ret . "\"" . $k . "\":\"" . $v . "\"" . ",");
-    }
-    :set $ret [:pick $ret 0 ([:len $ret] - 1)]
+    };
+    :set $ret [:pick $ret 0 ([:len $ret] - 1)];
     :return "\"attributes\":{$ret}";
-}
+};
 
 :local toMetric do={
     :return {"name"=$name; "value"=$value; "type"="gauge"};
-}
+};
 
 ##### END HELPER METHODS ########################################
 
 
 ##### START ACTUAL PROCESSING ###################################
 
-:set $attributes [$toAttributesJson attributes=$attributes]
-:set $common ("$attributes,\"timestamp\":$[$getTimestamp]")
+:set $attributes [$toAttributesJson attributes=$attributes];
+:set $common ("$attributes,\"timestamp\":" . [$getTimestamp]);
 
 :local metricsArray [:toarray ""];
 :foreach k,v in=$observedMetrics do={
@@ -136,6 +137,6 @@
 
 :local httpData [$nrMetricsToJson metrics=$metricsArray common=$common];
 
-/tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$NRAPIKEY" http-data=$httpData url=$METRICSURL
+/tool fetch http-method=post output=none http-header-field="Content-Type:application/json,Api-Key:$NRAPIKEY" http-data=$httpData url=$METRICSURL;
 
 ##### END ACTUAL PROCESSING #####################################
