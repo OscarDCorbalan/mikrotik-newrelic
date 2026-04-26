@@ -51,8 +51,8 @@
             :set ($observedMetrics->("mikrotik.interface." . $interfaceName . ".rxbps")) $"rx-bits-per-second";
             :set ($observedMetrics->("mikrotik.interface." . $interfaceName . ".fptxbps")) $"fp-tx-bits-per-second";
             :set ($observedMetrics->("mikrotik.interface." . $interfaceName . ".fprxbps")) $"fp-rx-bits-per-second";
-#            :set ($observedMetrics->("mikrotik.interface." . $interfaceName . ".txerrorsps")) $"tx-errors-per-second";    # commented due to no value which brakes json structure, maybe it should be replaced by 0 instead of empty string
-#            :set ($observedMetrics->("mikrotik.interface." . $interfaceName . ".rxerrorsps")) $"rx-errors-per-second";    # same as above
+#           :set ($observedMetrics->("mikrotik.interface." . $interfaceName . ".txerrorsps")) $"tx-errors-per-second";    # commented due to no value which brakes json structure, maybe it should be replaced by 0 instead of empty string
+#           :set ($observedMetrics->("mikrotik.interface." . $interfaceName . ".rxerrorsps")) $"rx-errors-per-second";    # same as above
         };
     }
 }
@@ -76,7 +76,7 @@
   :local ret ("[{\"common\":{$common},\"metrics\":[");
   :local firstIteration true;
 
-  :foreach k,metric in $metrics do={
+  :foreach k,metric in=[$metrics] do={
     if (!$firstIteration) do={
       :set $ret ($ret . ",");
     };
@@ -86,7 +86,7 @@
     :set ret ($ret . "{");
     :local isFirstMetricInArray true;
 
-    :foreach k,v in $metric do={
+    :foreach k,v in=[$metric] do={
       if ($isFirstMetricInArray) do={
         :set $ret ($ret . "\"".$k . "\":");
       } else={
@@ -96,7 +96,7 @@
 
       :if ([:typeof $v] = "str") do={
         :set $ret ($ret . "\"" . $v . "\"");
-      } else {
+      } else={
         :set $ret ($ret . $v);
       };
     };
